@@ -73,10 +73,7 @@ class StockDataPreprocessor:
             'technical': df[['Volatility', 'MA50', 'MA200']].select_dtypes(include=[np.number]),
         }
         
-        # Group financial features
-        financial_cols = [col for col in df.columns if col.startswith('Financial_')]
-        if financial_cols:
-            feature_groups['financial'] = df[financial_cols]
+
             
         return feature_groups
     
