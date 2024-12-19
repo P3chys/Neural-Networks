@@ -80,8 +80,7 @@ class StockDataPreprocessor:
             
         return feature_groups
     
-    def _scale_features(self, feature_groups: Dict[str, pd.DataFrame], 
-                       ticker: str) -> pd.DataFrame:
+    def _scale_features(self, feature_groups: Dict[str, pd.DataFrame], ticker: str) -> pd.DataFrame:
         """
         Scale features appropriately by group.
         """
@@ -92,23 +91,23 @@ class StockDataPreprocessor:
             if group_data.empty:
                 continue
                 
-            # Create and fit scaler
             scaler = StandardScaler()
+            # Reshape to 2D if necessary
+            if len(group_data.shape) == 1:
+                group_data = group_data.values.reshape(-1, 1)
+                
             scaled_values = scaler.fit_transform(group_data)
-            
-            # Store scaler for later use
             self.scalers[ticker][group_name] = scaler
             
             # Create DataFrame with scaled values
             scaled_df = pd.DataFrame(
                 scaled_values,
-                columns=group_data.columns,
-                index=group_data.index
+                columns=group_data.columns if hasattr(group_data, 'columns') else [group_name],
+                index=group_data.index if hasattr(group_data, 'index') else None
             )
             
-            # Add to combined scaled data
             scaled_data = pd.concat([scaled_data, scaled_df], axis=1)
-            
+        
         return scaled_data
     
     def _create_sequences(self, 
@@ -157,26 +156,20 @@ class StockDataPreprocessor:
         
         return train_data, val_data, test_data
     
-    def inverse_transform_predictions(self, predictions: np.ndarray, 
-                                   ticker: str) -> np.ndarray:
+    def inverse_transform_predictions(self, predictions: np.ndarray, ticker: str) -> np.ndarray:
         """
         Convert scaled predictions back to original price scale.
-        
-        Args:
-            predictions: Scaled predictions from the model
-            ticker: Stock ticker to use correct scaler
-            
-        Returns:
-            Predictions in original price scale
         """
         if 'price' not in self.scalers[ticker]:
             raise KeyError(f"No price scaler found for {ticker}")
             
-        # Reshape predictions if needed
-        reshaped_predictions = predictions.reshape(-1, 1)
+        # Create a dummy array with the same shape as what was used for fitting
+        dummy = np.zeros((predictions.shape[0], 4))  # 4 columns for OHLC
+        # Put the predictions in the Close price column (assumed to be column 3)
+        dummy[:, 3] = predictions.reshape(-1)
         
-        # Inverse transform using the price scaler (Close price is typically the 4th column)
-        original_scale = self.scalers[ticker]['price'].inverse_transform(
-            np.zeros((len(reshaped_predictions), 4)))[:, 3]
+        # Inverse transform
+        original_scale = self.scalers[ticker]['price'].inverse_transform(dummy)
         
-        return original_scale.reshape(predictions.shape)
+        # Return only the Close price column
+        return original_scale[:, 3].reshape(predictions.shape)
