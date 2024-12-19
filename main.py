@@ -60,8 +60,8 @@ def main():
         # 3. Data Preprocessing
         logging.info("Preprocessing cleaned data...")
         preprocessor = StockDataPreprocessor(
-            sequence_length=60,      # Use 60 days of history
-            prediction_horizon=5,    # Predict 5 days ahead
+            sequence_length=100,      # Use 60 days of history
+            prediction_horizon=3,    # Predict 5 days ahead
             train_ratio=0.7,        # 70% for training
             val_ratio=0.15          # 15% for validation (15% for testing)
         )
@@ -89,9 +89,9 @@ def main():
         # Initialize model
         n_features = X_train.shape[2]
         model = StockPredictionModel(
-            sequence_length=60,
+            sequence_length=100,
             n_features=n_features,
-            prediction_horizon=5
+            prediction_horizon=3
         )
         
         # Setup and run training pipeline
@@ -100,13 +100,13 @@ def main():
         history = training_pipeline.train(
             X_train, y_train,
             X_val, y_val,
-            epochs=50,
-            batch_size=32,
+            epochs=150,
+            batch_size=64,
             checkpoint_dir='models'  # Now passing directory instead of specific file path
         )
         
         #Evaluations
-        evaluator = StockModelEvaluator(model, preprocessor)
+        evaluator = StockModelEvaluator(model, preprocessor, prediction_horizon=3)
         # Calculate metrics
         evaluator.evaluate_predictions(X_test, y_test, 'AAPL')
 

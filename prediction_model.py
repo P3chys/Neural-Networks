@@ -31,60 +31,63 @@ class StockPredictionModel:
         
     def _build_model(self) -> keras.Model:
         """
-        Build and return the neural network model with enhanced architecture.
+        Build and return enhanced neural network model architecture.
         """
         model = Sequential([
-            # First recurrent layer with larger number of units
-            LSTM(128, 
-                 return_sequences=True,
-                 input_shape=(self.sequence_length, self.n_features),
-                 kernel_regularizer=L2(0.01)) if not self.use_gru else
-            GRU(128,
+            # First recurrent layer
+            LSTM(256, 
                 return_sequences=True,
                 input_shape=(self.sequence_length, self.n_features),
-                kernel_regularizer=L2(0.01)),
+                kernel_regularizer=L2(0.001)),  # Reduced regularization
                 
             BatchNormalization(),
-            Dropout(0.3),
+            Dropout(0.1),  # Reduced dropout
             
             # Second recurrent layer
-            LSTM(64, return_sequences=False) if not self.use_gru else
-            GRU(64, return_sequences=False),
+            LSTM(128, return_sequences=True),
             
-            BatchNormalization(),
-            Dropout(0.2),
-            
-            # Dense layers for prediction
-            Dense(32, activation='relu'),
             BatchNormalization(),
             Dropout(0.1),
+            
+            # Third recurrent layer for better feature extraction
+            LSTM(64, return_sequences=False),
+            
+            BatchNormalization(),
+            
+            # Wider dense layers
+            Dense(128, activation='relu'),
+            BatchNormalization(),
+            
+            Dense(64, activation='relu'),
+            BatchNormalization(),
             
             # Output layer
             Dense(self.prediction_horizon, activation='linear')
         ])
         
-        # Compile with Adam optimizer and MSE loss
+        # Use a lower learning rate
+        optimizer = keras.optimizers.Adam(learning_rate=0.00005)
+        
         model.compile(
-            optimizer=keras.optimizers.Adam(learning_rate=0.001),
+            optimizer=optimizer,
             loss='mse',
             metrics=['mae']
         )
-        
+    
         return model
     
     def _create_callbacks(self, checkpoint_path: str) -> list:
         """
-        Create training callbacks for monitoring and optimization.
+        Create training callbacks with adjusted parameters.
         """
         return [
-            # Early stopping to prevent overfitting
             EarlyStopping(
                 monitor='val_loss',
-                patience=10,
-                restore_best_weights=True
+                patience=15,  # Increased patience
+                restore_best_weights=True,
+                min_delta=0.0001  # Smaller improvements count
             ),
             
-            # Model checkpoint to save best model
             ModelCheckpoint(
                 filepath=checkpoint_path,
                 monitor='val_loss',
@@ -92,10 +95,9 @@ class StockPredictionModel:
                 mode='min'
             ),
             
-            # Reduce learning rate when training plateaus
             ReduceLROnPlateau(
                 monitor='val_loss',
-                factor=0.5,
+                factor=0.2,  # Smaller reduction
                 patience=5,
                 min_lr=1e-6
             )
