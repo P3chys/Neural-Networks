@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Dense, Dropout, BatchNormalization, LSTM, GRU
+from tensorflow.keras.layers import Dense, Dropout, BatchNormalization, LSTM, GRU, Input
 from tensorflow.keras.regularizers import L2
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 import numpy as np
@@ -12,7 +12,7 @@ class StockPredictionModel:
                  sequence_length: int,
                  n_features: int,
                  prediction_horizon: int,
-                 use_gru: bool = False):
+                 use_gru: bool = True):
         """
         Initialize the stock prediction model with enhanced configuration.
         
@@ -34,23 +34,25 @@ class StockPredictionModel:
         Build and return enhanced neural network model architecture.
         """
         model = Sequential([
+            # Input layer
+            Input(shape=(self.sequence_length, self.n_features)),
+            
             # First recurrent layer
-            LSTM(256, 
+            (GRU if self.use_gru else LSTM)(256, 
                 return_sequences=True,
-                input_shape=(self.sequence_length, self.n_features),
-                kernel_regularizer=L2(0.001)),  # Reduced regularization
+                kernel_regularizer=L2(0.0001)),  # Reduced regularization
                 
             BatchNormalization(),
             Dropout(0.1),  # Reduced dropout
             
             # Second recurrent layer
-            LSTM(128, return_sequences=True),
+            (GRU if self.use_gru else LSTM)(128, return_sequences=True),
             
             BatchNormalization(),
             Dropout(0.1),
             
             # Third recurrent layer for better feature extraction
-            LSTM(64, return_sequences=False),
+            (GRU if self.use_gru else LSTM)(64, return_sequences=False),
             
             BatchNormalization(),
             

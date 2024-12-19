@@ -7,7 +7,7 @@ from typing import List, Dict, Optional
 
 class StockDataCollector:
     def __init__(self, start_date: str = "2010-01-01", 
-                 end_date: str = "2015-12-31"):
+                 end_date: str = "2015-12-31", default_tickers: Optional[List[str]] = None):
         """
         Initialize the stock data collector with date validation.
         
@@ -24,11 +24,13 @@ class StockDataCollector:
             
         self.start_date = start_date
         self.end_date = end_date
-        
-        self.default_tickers = [
-            'AAPL', 'MSFT', 'KO', 'CSCO', 'BX',
-            'O', 'AMZN', 'ABBV', 'NKE', 'GOOG'
-        ]
+        if default_tickers is None:
+            self.default_tickers = [
+                'AAPL', 'MSFT', 'KO', 'CSCO', 'BX',
+                'O', 'AMZN', 'ABBV', 'NKE', 'GOOG'
+            ]
+        else:
+            self.default_tickers = default_tickers
 
     def _process_financial_data(self, data: pd.DataFrame, daily_index: pd.DatetimeIndex) -> pd.DataFrame:
         """
