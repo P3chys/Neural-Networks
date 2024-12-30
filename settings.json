@@ -1,0 +1,12 @@
+{
+    "start_date": "",
+    "end_date": "",
+    "min_non_null_ratio": "",
+    "log_file_path": "",
+    "row_data_path": "",
+    "seq_length": 100,
+    "prediction_horizon": "",
+    "train_ratio": "",
+    "val_ratio": "",
+    "stock_tickers": ["AAPL", "MSFT", "KO", "CSCO", "AMZN", "NKE", "GOOG"]
+}
