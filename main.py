@@ -10,8 +10,9 @@ from data_preprocessor import StockDataPreprocessor
 from prediction_model import StockPredictionModel
 from training_pipeline import StockTrainingPipeline
 from model_evaluator import StockModelEvaluator
+from pca_analyzer import PCAAnalyzer
 
-
+from config import Config
 
 START_DATE = "2010-01-01"
 END_DATE = "2015-12-31"
@@ -22,7 +23,7 @@ SEQUENCE_LENGTH = 100
 PREDICTION_HORIZON = 3
 TRAIN_RATIO = 0.7
 VAL_RATIO = 0.15
-STOCK_TICKER = 'KO'
+STOCK_TICKER = 'JNJ'
 
 def setup_directories():
     """Create necessary directories if they don't exist."""
@@ -144,6 +145,14 @@ def training_pipeline(model, X_train, y_train, X_val, y_val):
         batch_size=64,
         checkpoint_dir='models'
     )
+
+def pca_analyis(data):
+    pca_analyzer = PCAAnalyzer(data)            # Inicializace třídy
+    pca_analyzer.scale_data()                   # Škálování dat
+    pca_analyzer.perform_pca(Config.PCA_NUM)    # Provedení PCA
+    pca_analyzer.visualize_pca()                # Vizualizace výsledků
+    pca_analyzer.print_explained_variance()     # Tisk vysvětlené variability
+    pca_analyzer.print_components()             # Tisk vlivu atributů
 
 def main():
     os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'

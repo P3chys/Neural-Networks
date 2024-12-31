@@ -2,14 +2,12 @@ import yfinance as yf
 import pandas as pd
 
 # Seznam tickerů pro analýzu (např. 10 nejběžnějších z S&P 500)
-tickers = ["RGTI", "AAPL", "MSFT", 
-           "GOOG", "AMZN", "TSLA", 
-           "META", "NFLX", "NVDA", 
-           "ADBE", "ORCL", "QBTS",
-           "LCID", "SOUN", "PLTR",
-           "ABEV", "PLUG", "F",
-           "INTC", "QUBT", "NIO",
-           "AMD", ]
+tickers = ["RGTI", "AAPL", "MSFT", "GOOG", "AMZN", "TSLA", 
+           "META", "NFLX", "NVDA", "ADBE", "ORCL", "QBTS",
+           "LCID", "SOUN", "PLTR", "ABEV", "PLUG", "F",
+           "INTC", "QUBT", "NIO", "AMD", "AAL", "UBER",
+           "CSCO", "WMT", "U", "DAL", "BA", "NKE",
+           "PARA", "JNJ", "PYPL",]
 
 # Data z YFinance obsahují:
 #    Open: Cena akcie při otevření trhu.
@@ -74,4 +72,4 @@ results = fetch_and_analyze_data(tickers)
 
 # Výpis všech výsledků
 print(results)
-results.to_csv("data_summary.csv", index=False)
+#results.to_csv("data_summary.csv", index=False)
