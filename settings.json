@@ -8,5 +8,7 @@
     "prediction_horizon": "",
     "train_ratio": "",
     "val_ratio": "",
-    "stock_tickers": ["AAPL", "MSFT", "KO", "CSCO", "AMZN", "NKE", "GOOG"]
+    "stock_tickers": ["AAPL", "MSFT", "KO", "CSCO", "AMZN", "NKE", "GOOG"],
+    
+    "pca_components": 1
 }
