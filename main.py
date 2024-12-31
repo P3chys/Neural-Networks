@@ -1,7 +1,5 @@
 # main.py
 import os
-import logging
-from datetime import datetime
 
 # Import our modules
 from data_collector import StockDataCollector
@@ -11,7 +9,8 @@ from prediction_model import StockPredictionModel
 from training_pipeline import StockTrainingPipeline
 from model_evaluator import StockModelEvaluator
 from pca_analyzer import PCAAnalyzer
-
+import Helper.logger as log
+from Helper.data_io import DataIO
 from config import Config
 
 START_DATE = "2010-01-01"
@@ -23,7 +22,9 @@ SEQUENCE_LENGTH = 100
 PREDICTION_HORIZON = 3
 TRAIN_RATIO = 0.7
 VAL_RATIO = 0.15
-STOCK_TICKER = 'JNJ'
+STOCK_TICKER = Config.STOCK_TICKER
+logger = log.Logger(LOG_FILE_PATH)
+data_handler = DataIO(RAW_DATA_PATH)
 
 def setup_directories():
     """Create necessary directories if they don't exist."""
@@ -38,17 +39,6 @@ def setup_directories():
     for directory in directories:
         os.makedirs(directory, exist_ok=True)
 
-def setup_logging():
-    """Configure logging."""
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.FileHandler(LOG_FILE_PATH),
-            logging.StreamHandler()
-        ]
-    )
-
 def collect_stock_data():
     try:
         collector = StockDataCollector(
@@ -57,10 +47,10 @@ def collect_stock_data():
                 default_tickers=[STOCK_TICKER]
                 )
         stock_data = collector.collect_daily_data()
-        collector.save_data(stock_data=stock_data, path=RAW_DATA_PATH)
+        data_handler.save_data(stock_data)
         return stock_data
     except Exception as e:
-        logging.error(f"Data collection failed: {str(e)}")
+        logger.log_exception("Data collection failed", e)
         raise
 
 def clean_stock_data(stock_data):
@@ -68,11 +58,11 @@ def clean_stock_data(stock_data):
         cleaner = StockDataCleaner(MIN_NON_NULL_RATIO)
         cleaned_stock_data = cleaner.clean_stock_data(stock_data)
         cleaning_report = cleaner.get_cleaning_report()
-        logging.info("\nCleaning Report:")
-        logging.info(cleaning_report)
+        logger.log_info(cleaning_report)
+        logger.log_info("Data cleaning completed.")
         return cleaned_stock_data
     except Exception as e:
-        logging.error(f"Data cleaning failed: {str(e)}")
+        logger.log_exception("Data cleaning failed", e)
         raise
 
 def preprocess_stock_data(cleaned_stock_data):
@@ -86,7 +76,7 @@ def preprocess_stock_data(cleaned_stock_data):
         prepared_data = preprocessor.prepare_data(cleaned_stock_data)
         return prepared_data, preprocessor
     except Exception as e:
-        logging.error(f"Data preprocessing failed: {str(e)}")
+        logger.log_exception("Data preprocessing failed", e)
         raise
 
 def evaluate_model(model, X_test, y_test, preprocessor):
@@ -104,7 +94,7 @@ def evaluate_model(model, X_test, y_test, preprocessor):
         print("\nEvaluation Report:")
         print(report.to_string(index=False))
     except Exception as e:
-        logging.error(f"Model evaluation failed: {str(e)}")
+        logger.log_exception("Model evaluation failed", e)
         raise
 
 def setup_prediction_model(X_train):
@@ -117,7 +107,7 @@ def setup_prediction_model(X_train):
         )
         return model
     except Exception as e:
-        logging.error(f"Model setup failed: {str(e)}")
+        logger.log_exception("Model setup failed", e)
         raise
 
 def acess_data_splits(prepared_data):
@@ -128,11 +118,6 @@ def acess_data_splits(prepared_data):
     y_val = stock_data['val']['y']
     X_test = stock_data['test']['X']
     y_test = stock_data['test']['y']
-    
-    # Print data shapes
-    logging.info(f"Training data shape: {X_train.shape}")
-    logging.info(f"Validation data shape: {X_val.shape}")
-    logging.info(f"Test data shape: {X_test.shape}")
 
     return X_train, y_train, X_val, y_val, X_test, y_test
 
@@ -158,25 +143,25 @@ def main():
     os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
     # Setup project structure
     setup_directories()
-    setup_logging()
     
-    logging.info("Starting stock prediction pipeline...")
+    
+    logger.log_info("Starting stock prediction pipeline...")
     
     try:
         # 1. Data Collection
-        logging.info("Collecting stock data...")
+        logger.log_info("Collecting stock data...")
         stock_data = collect_stock_data()
         
         # 2. Data Cleaning
-        logging.info("Cleaning collected data...")
+        logger.log_info("Cleaning collected data...")
         cleaned_stock_data = clean_stock_data(stock_data)
         
         # 3. Data Preprocessing
-        logging.info("Preprocessing cleaned data...")
+        logger.log_info("Preprocessing cleaned data...")
         prepared_data, preprocessor = preprocess_stock_data(cleaned_stock_data)
         
         # 4. Model Training Setup
-        logging.info("Setting up model training...")
+        logger.log_info("Setting up model training...")
         X_train, y_train, X_val, y_val, X_test, y_test = acess_data_splits(prepared_data)
         
         
@@ -184,15 +169,15 @@ def main():
         model = setup_prediction_model(X_train)
         
         # 6. Model Training Pipeline
-        logging.info("Starting model training...")
+        logger.log_info("Starting model training...")
         training_pipeline(model, X_train, y_train, X_val, y_val)
         
         # 7. Model Evaluation
-        logging.info("Evaluating model...")
+        logger.log_info("Evaluating model...")
         evaluate_model(model, X_test, y_test, preprocessor)
         
     except Exception as e:
-        logging.error(f"Pipeline failed: {str(e)}")
+        logger.log_error(f"Pipeline failed: {str(e)}")
         raise
 
 if __name__ == "__main__":
