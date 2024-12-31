@@ -1,9 +1,11 @@
 from typing import Dict
 import pandas as pd
 import os
+from Helper.logger import Logger
 
 class DataIO:
     def __init__(self, path: str = "stock_data/"):
+        self.logger = Logger('./training_logs/training.log')
         self.path = path
 
     def save_data(self, data: Dict[str, pd.DataFrame]):
@@ -14,9 +16,9 @@ class DataIO:
             try:
                 filename = os.path.join(self.path, f"{ticker}_daily_data.csv")
                 data.to_csv(filename)
-                print(f"Successfully saved data for {ticker} to {filename}")
+                self.logger.log_info(f"Successfully saved data for {ticker}")
             except Exception as e:
-                print(f"Error saving data for {ticker}: {str(e)}")
+                self.logger.log_critical(f"Error saving data for {ticker}: {str(e)}")
 
     def load_data(self) -> Dict[str, pd.DataFrame]:
 
@@ -30,8 +32,8 @@ class DataIO:
                 try:
                     df = pd.read_csv(filename, index_col=0, parse_dates=True)
                     stock_data[ticker] = df
-                    print(f"Successfully loaded data for {ticker}")
+                    self.logger.log_info(f"Successfully loaded data for {ticker}")
                 except Exception as e:
-                    print(f"Error loading data for {ticker}: {str(e)}")
+                    self.logger.log_error(f"Error loading data for {ticker}: {str(e)}")
                     
         return stock_data
