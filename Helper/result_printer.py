@@ -1,3 +1,4 @@
+from config import Config
 class ResultPrinter:
     def print_results(df,spm,predictions,actual, metrics):
 
@@ -5,7 +6,7 @@ class ResultPrinter:
         for metric, value in metrics.items():
             print(f"{metric}: {value:.2f}")
 
-        last_data = df.tail(SEQUENCE_LENGTH)
+        last_data = df.tail(Config.SEQUENCE_LENGTH)
         next_day_prediction = spm.predict(last_data)
         print(f"Current closing price: ${float(df['Close'].iloc[-1]):.2f}")
         print(f"Predicted next day closing price: ${float(next_day_prediction):.2f}")
