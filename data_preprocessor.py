@@ -66,11 +66,13 @@ class StockDataPreprocessor:
         """
         Group features by type for appropriate scaling.
         """
+
+
         feature_groups = {
             'price': df[['Open', 'High', 'Low', 'Close']],
             'volume': df[['Volume']],
             'returns': df[['Daily_Return']],
-            'technical': df[['Volatility', 'MA50', 'MA200']].select_dtypes(include=[np.number]),
+            'technical': df[['Volatility', 'MA50', 'MA200', 'RSI']].select_dtypes(include=[np.number]),
         }
         
 
