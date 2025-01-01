@@ -4,7 +4,7 @@ import os
 from Helper.logger import Logger
 
 class DataIO:
-    def __init__(self, path: str = "stock_data/"):
+    def __init__(self, path: str = "Data/raw_data/"):
         self.logger = Logger('Data/training_logs/training.log')
         self.path = path
 
