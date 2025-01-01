@@ -32,7 +32,7 @@ class ElbowAnalyzer:
 
 # Testovací kód, pokud se spustí tento soubor samostatně
 if __name__ == "__main__":
-    from pca_analyzer import PCAAnalyzer  # Odkaz na vaši vlastní PCA třídu
+    from Tools.pca_analyzer import PCAAnalyzer  # Odkaz na vaši vlastní PCA třídu
     from config import Config
     import yfinance as yf
 

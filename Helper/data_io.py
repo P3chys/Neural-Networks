@@ -5,7 +5,7 @@ from Helper.logger import Logger
 
 class DataIO:
     def __init__(self, path: str = "stock_data/"):
-        self.logger = Logger('./training_logs/training.log')
+        self.logger = Logger('Data/training_logs/training.log')
         self.path = path
 
     def save_data(self, data: Dict[str, pd.DataFrame]):

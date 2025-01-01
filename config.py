@@ -2,7 +2,7 @@ class Config:
     START_DATE = "2010-01-01"
     END_DATE = "2015-12-31"
     MIN_NON_NULL_RATIO = 0.7
-    LOG_FILE_PATH = 'training_logs/training.log'
+    LOG_FILE_PATH = 'Data/training_logs/training.log'
     RAW_DATA_PATH = 'raw_data/'
     SEQUENCE_LENGTH = 100
     PREDICTION_HORIZON = 3
