@@ -6,6 +6,11 @@ from Helper.date_validator import DateValidator
 from Helper.market_data_calculator import MarketDataCalculator
 from Helper.logger import Logger
 
+from config import Config 
+STOCK_TICKER = Config.STOCK_TICKER
+CHCK1_TICKER = Config.CHCK1_TICKER
+CHCK2_TICKER = Config.CHCK2_TICKER
+
 class StockDataCollector:
     def __init__(self, 
                  start_date: str = "2014-12-31", 
@@ -27,11 +32,11 @@ class StockDataCollector:
     
 
     def collect_daily_data(self) -> Dict[str, pd.DataFrame]:
-        jnj = yf.download('JNJ', start=self.start_date, end=self.end_date)
+        jnj = yf.download(STOCK_TICKER, start=self.start_date, end=self.end_date)
         time.sleep(1)
-        spy = yf.download('SPY', start=self.start_date, end=self.end_date)
+        spy = yf.download(CHCK1_TICKER, start=self.start_date, end=self.end_date)
         time.sleep(1)
-        xlv = yf.download('XLV', start=self.start_date, end=self.end_date)
+        xlv = yf.download(CHCK2_TICKER, start=self.start_date, end=self.end_date)
         
         jnj.index = jnj.index.tz_localize(None)
         spy.index = spy.index.tz_localize(None)
