@@ -54,8 +54,8 @@ def main():
         ###                      ANALYZE DATA                       ###
         ###############################################################
         if(ANALYZE):
-            analyzer = DataAnalyzer()
-            DataAnalyzer.analyze()
+            analyzer = DataAnalyzer(data=stock_data)
+            analyzer.analyze()
 
         ###############################################################
         ###                     PREPROCESS DATA                     ###
