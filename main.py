@@ -18,19 +18,6 @@ RAW_DATA_PATH = Config.RAW_DATA_PATH
 SEQUENCE_LENGTH = Config.SEQUENCE_LENGTH
 STOCK_TICKER = Config.STOCK_TICKER
 MODEL_PATH = Config.MODEL_PATH
-
-
-
-#TODO: Dejve toto někam zahoď :D
-def pca_analyis(data):
-    pca_analyzer = PCAAnalyzer(data)            # Inicializace třídy
-    pca_analyzer.scale_data()                   # Škálování dat
-    pca_analyzer.perform_pca(Config.PCA_NUM)    # Provedení PCA
-    pca_analyzer.visualize_pca()                # Vizualizace výsledků
-    pca_analyzer.print_explained_variance()     # Tisk vysvětlené variability
-    pca_analyzer.print_components()             # Tisk vlivu atributů
-
-
         
 def main():
     ###############################################################
