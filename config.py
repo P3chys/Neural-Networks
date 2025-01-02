@@ -19,7 +19,7 @@ class Config:
     ANALYZE = False,
     PCA_NUM = 3
     SAVE_GRAPH = True
-    SHOW_GRAPH = True
+    SHOW_GRAPH = False
     SAVE_STATS = True
     PRINT_STATS = False
 

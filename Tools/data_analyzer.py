@@ -1,5 +1,7 @@
 import numpy as np
 from Tools.pca_analyzer import PCAAnalyzer
+from Tools.elbow_analyzer import ElbowAnalyzer
+from Tools.kmeans_analyzer import KmeansAnalyzer
 from config import Config
 
 PCA_NUM = Config.PCA_NUM
@@ -19,6 +21,7 @@ class DataAnalyzer:
         pca_analyzer = PCAAnalyzer(self.raw_data)
         pca_analyzer.scale_data()
         pca_analyzer.perform_pca(self.components_count)
+        self.pca_result = pca_analyzer.pca_result
 
         if PRINT_STATS:
             pca_analyzer.print_explained_variance()
@@ -28,10 +31,21 @@ class DataAnalyzer:
             pca_analyzer.visualize_pca()
 
     def process_elbow(self):
-        pass
+        analyzer = ElbowAnalyzer(self.pca_result)
+
+        if SHOW_GRAPH:
+            analyzer.plot_elbow_curve()
 
     def process_kmens(self):
-        pass
+        analyzer = KmeansAnalyzer(self.raw_data, self.pca_result, self.components_count)
+
+        if PRINT_STATS:
+            analyzer.print()
+
+        if SHOW_GRAPH:
+            analyzer.visualize()
 
     def analyze(self):
         self.process_pca()
+        self.process_elbow()
+        self.process_kmens()
