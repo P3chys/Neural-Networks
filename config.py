@@ -7,7 +7,10 @@ class Config:
     MODEL_PATH = 'Models/models/best_model'
 
     SEQUENCE_LENGTH = 100
-    STOCK_TICKER = 'JNJ'
+    STOCK_TICKER = 'JNJ',
+    CHCK1_TICKER = '',
+    CHCK2_TICKER = '',
 
-    STOCK_TICKERS = ["AAPL", "MSFT", "KO", "CSCO", "AMZN", "NKE", "GOOG"],
+    SELECTED_MODEL = '',
+    ANALYZE = False,
     PCA_NUM = 2

@@ -9,6 +9,7 @@ from Tools.pca_analyzer import PCAAnalyzer
 from config import Config
 from Helper.directory_setup import DirectorySetup
 from Helper.result_printer import ResultPrinter
+from Tools.data_analyzer import DataAnalyzer
 
 START_DATE = Config.START_DATE
 END_DATE = Config.END_DATE
@@ -18,6 +19,9 @@ RAW_DATA_PATH = Config.RAW_DATA_PATH
 SEQUENCE_LENGTH = Config.SEQUENCE_LENGTH
 STOCK_TICKER = Config.STOCK_TICKER
 MODEL_PATH = Config.MODEL_PATH
+
+ANALYZE = Config.ANALYZE
+SELECTED_MODEL= Config.SELECTED_MODEL # pokud == '' vytvoří se nový
         
 def main():
     ###############################################################
@@ -47,6 +51,13 @@ def main():
         raw_data_handler.save_data(stock_data)
 
         ###############################################################
+        ###                      ANALYZE DATA                       ###
+        ###############################################################
+        if(ANALYZE):
+            analyzer = DataAnalyzer()
+            DataAnalyzer.analyze()
+
+        ###############################################################
         ###                     PREPROCESS DATA                     ###
         ###############################################################
         sdp = StockDataPreprocessor(df=stock_data, sequence_length=SEQUENCE_LENGTH)
@@ -68,6 +79,7 @@ def main():
         spm = StockPredictionModel(input_shape=(X.shape[1], X.shape[2]),scalers=sdp.scalers, feature_columns=sdp.feature_columns, sequence_length=SEQUENCE_LENGTH)
         # 5. Setup Prediction Model
         model = spm.build_model()
+        # upravit: pokud je vybraný natrénovaný model, přeskočit trénování
         history = spm.train(X_train
                             , y_train
                             , validation_split=0.2
