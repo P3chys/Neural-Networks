@@ -12,5 +12,28 @@ class Config:
     CHCK2_TICKER = '',
 
     SELECTED_MODEL = '',
+    NEW_MODEL_NAME = 'Model-JNJ'
+
     ANALYZE = False,
     PCA_NUM = 2
+
+    LAYERS = [
+        { #1
+            'units': 128,
+            'return_sequences': True,
+            'hidden_dim': 64,
+            'dropout': 0.3
+        },
+        { #2
+            'units': 128,
+            'return_sequences': True,
+            'hidden_dim': 64,
+            'dropout': 0.3
+        },
+        { #3
+            'units': 64,
+            'return_sequences': True,
+            'hidden_dim': 32,
+            'dropout': 0.3
+        },
+    ]
