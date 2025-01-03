@@ -20,6 +20,7 @@ class PCAAnalyzer:
         self.pca_result = None
         self.explained_variance = None
         self.components = None
+        self.figsize = (8, 6)
     
     def scale_data(self):
         """Škáluje data na průměr 0 a směrodatnou odchylku 1."""
@@ -47,18 +48,14 @@ class PCAAnalyzer:
     
     def visualize_pca(self):
         """Vizualizuje první dvě hlavní komponenty."""
-        if self.pca_result is None:
-            raise ValueError("PCA nebylo provedeno. Nejprve zavolejte perform_pca().")
-        
-        plt.figure(figsize=(8, 6))
-        plt.scatter(
-            self.pca_result[:, 0], self.pca_result[:, 1],
-            c='blue', edgecolor='k', s=50
-        )
-        plt.title("PCA Vizualizace")
-        plt.xlabel(f"PC1 ({self.explained_variance[0]:.2%} variability)")
-        plt.ylabel(f"PC2 ({self.explained_variance[1]:.2%} variability)")
-        plt.grid()
+        plt.cla()
+        fig = plt.figure(figsize=self.figsize)
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(self.pca_result[:, 0], self.pca_result[:, 1], self.pca_result[:, 2], alpha=0.7)
+        ax.set_xlabel('PCA1')
+        ax.set_ylabel('PCA2')
+        ax.set_zlabel('PCA3')
+        plt.title('3D PCA Scatter Plot')
         plt.show()
     
     def print_explained_variance(self):
@@ -77,6 +74,18 @@ class PCAAnalyzer:
         
         print("Vliv atributu na hlavni komponenty:")
         print(self.components)
+
+    def save_pca_graph(self, path = "PCA.png"):
+        """Uloží graf PCA analýzy."""
+        plt.cla()
+        fig = plt.figure(figsize=self.figsize)
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(self.pca_result[:, 0], self.pca_result[:, 1], self.pca_result[:, 2], alpha=0.7)
+        ax.set_xlabel('PCA1')
+        ax.set_ylabel('PCA2')
+        ax.set_zlabel('PCA3')
+        plt.title('3D PCA Scatter Plot')
+        plt.savefig(path, dpi=300)
 
 if __name__ == "__main__":
     # Definice tickeru a načtení dat

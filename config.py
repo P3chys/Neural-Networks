@@ -21,7 +21,7 @@ class Config:
     SAVE_GRAPH = True
     SHOW_GRAPH = False
     SAVE_STATS = True
-    PRINT_STATS = False
+    PRINT_STATS = True
 
     # PREDICTION MODEL
     LAYERS = [

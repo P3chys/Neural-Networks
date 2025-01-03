@@ -11,6 +11,7 @@ class ElbowAnalyzer:
             explained_variance (np.ndarray): Pole vysvětlené variance z PCA.
         """
         self.data = data
+        self.plt_size = range(1, 11)
         self.wcss = [] # WCSS = Within-Cluster Sum of Squares (součet čtverců uvnitř klastrů)
         # Pro každý bod v klastru se vypočítá vzdálenost mezi bodem a středem klastru (centroidem).
         # Tyto vzdálenosti se umocní na druhou (čtverce) a sečtou.
@@ -21,14 +22,22 @@ class ElbowAnalyzer:
             self.wcss.append(kmeans.inertia_)
     
     def plot_elbow_curve(self):
-        """
-        Vykreslí Elbow křivku na základě kumulativní vysvětlené variance.
-        """
-        plt.plot(range(1, 11), self.wcss)
+        """Vykreslí Elbow křivku na základě kumulativní vysvětlené variance."""
+        plt.clf()
+        plt.plot(self.plt_size, self.wcss)
         plt.title('The Elbow Method')
         plt.xlabel('Number of clusters')
         plt.ylabel('WCSS')
         plt.show()
+
+    def save_elbow_curve(self, path = "Elbow.png"):
+        """Vykreslí Elbow křivku na základě kumulativní vysvětlené variance."""
+        plt.clf()
+        plt.plot(self.plt_size, self.wcss)
+        plt.title('The Elbow Method')
+        plt.xlabel('Number of clusters')
+        plt.ylabel('WCSS')
+        plt.savefig(path, dpi=300, bbox_inches='tight') 
 
 # Testovací kód, pokud se spustí tento soubor samostatně
 if __name__ == "__main__":

@@ -12,9 +12,9 @@ class KmeansAnalyzer:
         self.kmeans = KMeans(n_clusters=n_clusters, random_state=10)
         self.kmeans_df['Cluster'] = self.kmeans.fit_predict(self.kmeans_df)
 
-    def visualize(self):
+    def graph(self):
         # Create Plotly figure for 2D scatter plot
-        fig = make_subplots(rows=1, cols=1, specs=[[{'type': 'scatter'}]])
+        self.fig = make_subplots(rows=1, cols=1, specs=[[{'type': 'scatter'}]])
 
         # Add scatter plot for each cluster
         for cluster in range(7):
@@ -26,13 +26,21 @@ class KmeansAnalyzer:
                     [f'{col}: {row[col]}' for col in cluster_points.columns]
                 ), axis=1
             )
-            fig.add_trace(go.Scatter(x=cluster_points['PCA_1'], y=cluster_points['PCA_2'], mode='markers', name=f'Cluster {cluster + 1}', hoverinfo='text', text=hover_text))
+            self.fig.add_trace(go.Scatter(x=cluster_points['PCA_1'], y=cluster_points['PCA_2'], mode='markers', name=f'Cluster {cluster + 1}', hoverinfo='text', text=hover_text))
 
         # Update layout
-        fig.update_layout(title='K-Means Clustering', xaxis_title='PCA1', yaxis_title='PCA2')
+        self.fig.update_layout(title='K-Means Clustering', xaxis_title='PCA1', yaxis_title='PCA2')
 
+    def visualize(self):
         # Show plot
-        fig.show()
+        self.graph()
+        self.fig.show()
+
+    def save_graph(self, path = "K-Means.png"):
+        #save plot
+        self.graph()
+        self.fig.write_image(path, format="png", width=800, height=600, scale=2)
+        
 
     def print(self):
         print("K-Means:")
