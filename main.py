@@ -20,6 +20,10 @@ SEQUENCE_LENGTH = Config.SEQUENCE_LENGTH
 STOCK_TICKER = Config.STOCK_TICKER
 MODEL_PATH = Config.MODEL_PATH
 
+EPOCHS = Config.EPOCHS
+BATCH_SIZE = Config.BATCH_SIZE
+VALID_SPLIT = Config.VALID_SPLIT
+
 ANALYZE = Config.ANALYZE
 SELECTED_MODEL= Config.SELECTED_MODEL # pokud == '' vytvoří se nový
         
@@ -67,7 +71,7 @@ def main():
         ###############################################################
         ###                     SPLIT DATA                          ###
         ###############################################################
-        log.log_info("Setting up model training...")
+        log.log_info("Setting up model data...")
         X_train, X_test, y_train, y_test, df_test = sdp.split_data(X
                                                                    ,y
                                                                    ,stock_data
@@ -76,20 +80,34 @@ def main():
         ###############################################################
         ###                     BUILD & TRAIN MODEL                 ###
         ###############################################################
-        spm = StockPredictionModel(input_shape=(X.shape[1], X.shape[2]),scalers=sdp.scalers, feature_columns=sdp.feature_columns, sequence_length=SEQUENCE_LENGTH)
+        
         # 5. Setup Prediction Model
+        log.log_info("Setting up model building...")
+
+        if SELECTED_MODEL != '':
+            log.log_info(f"Loading existing model from: {SELECTED_MODEL}")
+            #spm = StockPredictionModel.load_model(filepath=SELECTED_MODEL)
+            spm = StockPredictionModel.load_model(filepath="Models/models/model_JNJ.weights.h5")
+        else:
+            log.log_info("No pre-trained model selected, building a new one.")
+            spm = StockPredictionModel(input_shape=(X.shape[1], X.shape[2]),
+                                        scalers=sdp.scalers,
+                                        feature_columns=sdp.feature_columns,
+                                        sequence_length=SEQUENCE_LENGTH)
         model = spm.build_model()
-        # upravit: pokud je vybraný natrénovaný model, přeskočit trénování
-        history = spm.train(X_train
-                            , y_train
-                            , validation_split=0.2
-                            , epochs=200
-                            , batch_size=32
-                            , checkpoint_path=MODEL_PATH)
+
+        log.log_info("Setting up model training...")
+        history = spm.train(X_train,y_train, 
+                            validation_split=VALID_SPLIT, 
+                            epochs=EPOCHS, 
+                            batch_size=BATCH_SIZE, 
+                            checkpoint_path=MODEL_PATH)
         
         ###############################################################
         ###                     EVALUATE MODEL                      ###
         ###############################################################
+        
+        log.log_info("Evaluating model...")
         metrics, predictions, actual = spm.evaluate(X_test, y_test)
         ResultPrinter.print_results(df_test,spm,predictions,actual, metrics)
         

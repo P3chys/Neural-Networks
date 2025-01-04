@@ -4,16 +4,14 @@ class Config:
 
     LOG_FILE_PATH = 'Data/training_logs/training.log'
     RAW_DATA_PATH = '/Data/raw_data/'
-    MODEL_PATH = 'Models/models/best_model'
+    MODEL_PATH = 'Models/models/model_JNJ'
     GRAPH_PATH = 'Documentation/'
+    SELECTED_MODEL = ''#'Models/models/model_JNJ.weights.h5'
 
     SEQUENCE_LENGTH = 100
-    STOCK_TICKER = 'JNJ',
-    CHCK1_TICKER = 'SPY',
-    CHCK2_TICKER = 'XLV',
-
-    SELECTED_MODEL = '',
-    NEW_MODEL_NAME = 'Model-JNJ'
+    STOCK_TICKER = 'JNJ'
+    CHCK1_TICKER = 'SPY'
+    CHCK2_TICKER = 'XLV'
 
     # DATA ANALYZER
     ANALYZE = False,
@@ -24,6 +22,9 @@ class Config:
     PRINT_STATS = True
 
     # PREDICTION MODEL
+    EPOCHS = 200
+    BATCH_SIZE = 32
+    VALID_SPLIT = 0.2
     LAYERS = [
         { #1
             'units': 128,

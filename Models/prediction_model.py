@@ -11,6 +11,9 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 from typing import Dict, Tuple, Optional
 
+from config import Config
+LAYERS = Config.LAYERS
+
 class TemporalAttentionLayer(tf.keras.layers.Layer):
     def __init__(self, hidden_dim=64):
         super().__init__()
@@ -45,23 +48,23 @@ class StockPredictionModel:
             Input(shape=self.input_shape),
             
             # First LSTM layer with attention
-            LSTM(units=128, return_sequences=True),
+            LSTM(units=LAYERS[0]['units'], return_sequences=LAYERS[0]['return_sequences']),
             LayerNormalization(),
-            TemporalAttentionLayer(hidden_dim=64),
-            Dropout(0.3),
+            TemporalAttentionLayer(hidden_dim=LAYERS[0]['hidden_dim']),
+            Dropout(LAYERS[0]['dropout']),
             
             # Second LSTM layer with attention
-            LSTM(units=128, return_sequences=True),
+            LSTM(units=LAYERS[1]['units'], return_sequences=LAYERS[1]['return_sequences']),
             LayerNormalization(),
-            TemporalAttentionLayer(hidden_dim=64),
-            Dropout(0.3),
+            TemporalAttentionLayer(hidden_dim=LAYERS[1]['hidden_dim']),
+            Dropout(LAYERS[1]['dropout']),
             
             # Third LSTM layer with attention
-            LSTM(units=64, return_sequences=True),
+            LSTM(units=LAYERS[2]['units'], return_sequences=LAYERS[2]['return_sequences']),
             LayerNormalization(),
-            TemporalAttentionLayer(hidden_dim=32),
+            TemporalAttentionLayer(hidden_dim=LAYERS[2]['hidden_dim']),
             LSTM(units=32, return_sequences=False),
-            Dropout(0.3),
+            Dropout(LAYERS[2]['dropout']),
             
             # Dense layers
             Dense(units=32, activation='relu'),
