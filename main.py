@@ -20,6 +20,7 @@ SEQUENCE_LENGTH = Config.SEQUENCE_LENGTH
 STOCK_TICKER = Config.STOCK_TICKER
 MODEL_PATH = Config.MODEL_PATH
 
+LEARN_MODEL = Config.LEARN_MODEL
 EPOCHS = Config.EPOCHS
 BATCH_SIZE = Config.BATCH_SIZE
 VALID_SPLIT = Config.VALID_SPLIT
@@ -57,7 +58,7 @@ def main():
         ###############################################################
         ###                      ANALYZE DATA                       ###
         ###############################################################
-        if(ANALYZE):
+        if ANALYZE:
             analyzer = DataAnalyzer(data=stock_data)
             analyzer.analyze()
 
@@ -83,21 +84,19 @@ def main():
         
         # 5. Setup Prediction Model
         log.log_info("Setting up model building...")
+        spm = StockPredictionModel(input_shape=(X.shape[1], X.shape[2]),
+                                    scalers=sdp.scalers,
+                                    feature_columns=sdp.feature_columns,
+                                    sequence_length=SEQUENCE_LENGTH)
+        model = spm.build_model()
 
         if SELECTED_MODEL != '':
             log.log_info(f"Loading existing model from: {SELECTED_MODEL}")
-            #spm = StockPredictionModel.load_model(filepath=SELECTED_MODEL)
-            spm = StockPredictionModel.load_model(filepath="Models/models/model_JNJ.weights.h5")
-        else:
-            log.log_info("No pre-trained model selected, building a new one.")
-            spm = StockPredictionModel(input_shape=(X.shape[1], X.shape[2]),
-                                        scalers=sdp.scalers,
-                                        feature_columns=sdp.feature_columns,
-                                        sequence_length=SEQUENCE_LENGTH)
-        model = spm.build_model()
-
-        log.log_info("Setting up model training...")
-        history = spm.train(X_train,y_train, 
+            spm.load_model(weights_path=SELECTED_MODEL)
+        
+        if LEARN_MODEL:
+            log.log_info("Setting up model training...")
+            history = spm.train(X_train,y_train, 
                             validation_split=VALID_SPLIT, 
                             epochs=EPOCHS, 
                             batch_size=BATCH_SIZE, 

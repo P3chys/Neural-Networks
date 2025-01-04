@@ -205,8 +205,8 @@ class StockPredictionModel:
         """Save the complete model to disk."""
         self.model.save(filepath)
     
-    @classmethod
-    def load_model(cls, filepath: str) -> 'StockPredictionModel':
-        """Load a saved model from disk."""
-        model = tf.keras.models.load_model(filepath)
-        return model
+    def load_model(self, weights_path: str):
+        """Load weight model from file (.h5)."""
+        # model = tf.keras.models.load_model(filepath)
+        # https://stackoverflow.com/questions/35074549/how-to-load-a-model-from-an-hdf5-file-in-keras
+        self.model.load_weights(weights_path) 

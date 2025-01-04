@@ -6,8 +6,9 @@ class Config:
     RAW_DATA_PATH = '/Data/raw_data/'
     MODEL_PATH = 'Models/models/model_JNJ'
     GRAPH_PATH = 'Documentation/'
-    SELECTED_MODEL = ''#'Models/models/model_JNJ.weights.h5'
+    SELECTED_MODEL = 'Models/models/model_JNJ.weights.h5'
 
+    LEARN_MODEL = False
     SEQUENCE_LENGTH = 100
     STOCK_TICKER = 'JNJ'
     CHCK1_TICKER = 'SPY'
@@ -16,10 +17,10 @@ class Config:
     # DATA ANALYZER
     ANALYZE = False,
     PCA_NUM = 3
-    SAVE_GRAPH = True
+    SAVE_GRAPH = False
     SHOW_GRAPH = False
-    SAVE_STATS = True
-    PRINT_STATS = True
+    SAVE_STATS = False
+    PRINT_STATS = False
 
     # PREDICTION MODEL
     EPOCHS = 200
