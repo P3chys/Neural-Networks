@@ -4,13 +4,13 @@ class Config:
 
     LOG_FILE_PATH = 'Data/training_logs/training.log'
     RAW_DATA_PATH = '/Data/raw_data/'
-    MODEL_PATH = 'Models/models/model_JNJ'
-    GRAPH_PATH = 'Documentation/'
+    MODEL_PATH = 'Models/models/model_JNJ' # save model
+    GRAPH_PATH = 'Documentation/'          # save graph
     SELECTED_MODEL = 'Models/models/model_JNJ.weights.h5'
 
-    LEARN_MODEL = False
+    LEARN_MODEL = False      # True = training model
     SEQUENCE_LENGTH = 100
-    STOCK_TICKER = 'JNJ'
+    STOCK_TICKER = 'JNJ'    # JNJ, PFE, LLY, MRK
     CHCK1_TICKER = 'SPY'
     CHCK2_TICKER = 'XLV'
 
@@ -28,19 +28,19 @@ class Config:
     VALID_SPLIT = 0.2
     LAYERS = [
         { #1
-            'units': 256,
+            'units': 128,
             'return_sequences': True,
             'hidden_dim': 64,
             'dropout': 0.3
         },
         { #2
-            'units': 256,
+            'units': 128,
             'return_sequences': True,
             'hidden_dim': 64,
             'dropout': 0.3
         },
         { #3
-            'units': 128,
+            'units': 64,
             'return_sequences': True,
             'hidden_dim': 32,
             'dropout': 0.3
