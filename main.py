@@ -79,7 +79,7 @@ def main():
                                                      ,sequence_length=SEQUENCE_LENGTH)
         
         ###############################################################
-        ###                     BUILD & TRAIN MODEL                 ###
+        ###                     BUILD MODEL                         ###
         ###############################################################
         
         # 5. Setup Prediction Model
@@ -93,6 +93,10 @@ def main():
         if SELECTED_MODEL != '':
             log.log_info(f"Loading existing model from: {SELECTED_MODEL}")
             spm.load_model(weights_path=SELECTED_MODEL)
+
+        ###############################################################
+        ###                     TRAIN MODEL                         ###
+        ###############################################################
         
         if LEARN_MODEL:
             log.log_info("Setting up model training...")
