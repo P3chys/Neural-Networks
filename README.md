@@ -32,6 +32,6 @@ This will collect stock data, preprocess it, train the model, evaluate performan
 
 Explore the generated visualizations and reports to analyze the model's predictions and performance. Use TensorBoard to track training progress:
 ```bash
-tensorboard --logdir=training_logs/tensorboard
+tensorboard --logdir=Data/training_logs/tensorboard
 ```
 
